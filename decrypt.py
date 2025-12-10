@@ -27,7 +27,6 @@ pc2 = [
 ]
 
 def key(user_key=None):
-    # If a key is provided as an argument, use it; otherwise prompt the user.
     if user_key is None:
         user_key=input("Please enter key wiht maximun 8 characters: ")
     binary_key=""
