@@ -1,10 +1,8 @@
+shifts = [1,1,2,2,2,2,2,2,1,2,2,2,2,2,2,1] # For me to know the shifts
 
-shifts = [1,1,2,2,2,2,2,2,1,2,2,2,2,2,2,1]
 
-def key():
-    
-    
-    pc1 = [
+#First choice permutaion
+pc1 = [
 57,49,41,33,25,17,9,
 1,58,50,42,34,26,18,
 10,2,59,51,43,35,27,
@@ -15,7 +13,9 @@ def key():
 21,13,5,28,20,12,4
 ]
 
-    pc2 = [
+
+#Second choice permutation
+pc2 = [
 14,17,11,24,1,5,
 3,28,15,6,21,10,
 23,19,12,4,26,8,
@@ -26,8 +26,10 @@ def key():
 46,42,50,36,29,32
 ]
 
-
-    user_key=input("Please enter key wiht maximun 8 characters: ")
+def key(user_key=None):
+    # If a key is provided as an argument, use it; otherwise prompt the user.
+    if user_key is None:
+        user_key=input("Please enter key wiht maximun 8 characters: ")
     binary_key=""
     for char in user_key:
         binary_key+= format(ord(char),"08b")
@@ -44,6 +46,9 @@ def key():
             return None
         pos+=1
 
+
+    # Here I basically took the key from the user and ensured it turned into 64 bits
+
     new_bits=""
     index=0
     while index < 56:
@@ -57,6 +62,8 @@ def key():
     D0=new_bits[half:]
     print("C0=: ",C0,"D0=",D0)
 
+    #Here I performed the first choice permutation and skipped the 8 bits then made half C and D
+
     round_keys=[]
     round_number=1
     while round_number<= 16:
@@ -67,7 +74,6 @@ def key():
 
         shift_counter=0
         while shift_counter < shifts_number:
-            # left shift C0 by one
             first_bit=C0[0]
             new_C=""
             C_pos=1
@@ -76,7 +82,9 @@ def key():
                 C_pos+=1
             C0=new_C + first_bit
 
-            # left shift D0 by one
+    #Here I basically ensured that every round has its correct shift
+
+            
             first_bitD=D0[0]
             new_D=""
             D_pos=1
@@ -87,13 +95,20 @@ def key():
 
             shift_counter+=1
 
-        # build subkey using pc2 from the updated C0 and D0
+
+
+        
+        
+        #Here I am perforimg the second choice Permutation after the shifts and combining C and C to make it complete Perm
+        combined = C0 + D0
         subkey_bits=""
         pc2_index=0
         while pc2_index < 48:
             chosen_index=pc2[pc2_index]
-            # choose bit from C0 or D0 depending on index
-            chosen_bit=(C0 + D0)[chosen_index-1]
+            if chosen_index < 1 or chosen_index > len(combined):
+                print(f"There is an Error pc2 in : [{pc2_index}]={chosen_index} is out of range for combined length {len(combined)}")
+                return None
+            chosen_bit=combined[chosen_index-1]
             subkey_bits=subkey_bits+chosen_bit
             pc2_index+=1
 
